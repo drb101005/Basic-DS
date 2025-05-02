@@ -1,51 +1,133 @@
 #include <stdio.h>
-#define MAX 5
+#include <stdlib.h>
+#include <stdbool.h>
 
-int stack[MAX], top = -1;
+#define MAX_SIZE 5
 
-void push() {
-    if (top == MAX-1) printf("Stack Overflow!\n");
-    else {
-        int val;
-        printf("Enter the value to be inserted: ");
-        scanf("%d", &val);
-        stack[++top] = val;
-        printf("\nInsertion success!!!\n");
-    }
-}
+typedef struct {
+    int data[MAX_SIZE];
+    int top;
+} Stack;
 
-void pop() {
-    if (top == -1) printf("Stack Underflow!\n");
-    else printf("Popped: %d\n", stack[top--]);
-}
-
-void display() {
-    if (top == -1) printf("Stack is empty\n");
-    else {
-        printf("Stack: ");
-        for (int i = top; i >= 0; i--) printf("%d ", stack[i]);
-        printf("\n");
-    }
-}
-
-void peek() {
-    if (top == -1) printf("Stack is empty\n");
-    else printf("Top element: %d\n", stack[top]);
-}
+// Function prototypes
+void initializeStack(Stack *s);
+bool isFull(Stack *s);
+bool isEmpty(Stack *s);
+void push(Stack *s);
+void pop(Stack *s);
+void display(Stack *s);
+void peek(Stack *s);
+void stackSize(Stack *s);
+void clearStack(Stack *s);
+void printMenu();
 
 int main() {
+    Stack myStack;
+    initializeStack(&myStack);
     int choice;
+
     while (1) {
-        printf("\n***** MENU *****\n1. Push\n2. Pop\n3. Display\n4. Peek\n5. Exit\n\nEnter your choice: ");
+        printMenu();
+        printf("Enter your choice: ");
         scanf("%d", &choice);
-        
+
         switch (choice) {
-            case 1: push(); break;
-            case 2: pop(); break;
-            case 3: display(); break;
-            case 4: peek(); break;
-            case 5: return 0;
-            default: printf("Invalid choice!\n");
+            case 1: push(&myStack); break;
+            case 2: pop(&myStack); break;
+            case 3: display(&myStack); break;
+            case 4: peek(&myStack); break;
+            case 5: stackSize(&myStack); break;
+            case 6: clearStack(&myStack); break;
+            case 7: 
+                clearStack(&myStack);
+                printf("Exiting program.\n");
+                exit(EXIT_SUCCESS);
+            default: 
+                printf("Invalid choice! Please try again.\n");
+                while(getchar() != '\n'); // Clear input buffer
         }
     }
+
+    return 0;
+}
+
+void initializeStack(Stack *s) {
+    s->top = -1;
+}
+
+bool isFull(Stack *s) {
+    return s->top == MAX_SIZE - 1;
+}
+
+bool isEmpty(Stack *s) {
+    return s->top == -1;
+}
+
+void push(Stack *s) {
+    if (isFull(s)) {
+        printf("Stack Overflow! Cannot push more elements.\n");
+        return;
+    }
+
+    int value;
+    printf("Enter value to push: ");
+    if (scanf("%d", &value) != 1) {
+        printf("Invalid input! Please enter an integer.\n");
+        while(getchar() != '\n'); // Clear input buffer
+        return;
+    }
+
+    s->data[++s->top] = value;
+    printf("Successfully pushed %d onto the stack.\n", value);
+}
+
+void pop(Stack *s) {
+    if (isEmpty(s)) {
+        printf("Stack Underflow! Cannot pop from empty stack.\n");
+        return;
+    }
+
+    printf("Popped value: %d\n", s->data[s->top--]);
+}
+
+void display(Stack *s) {
+    if (isEmpty(s)) {
+        printf("Stack is empty.\n");
+        return;
+    }
+
+    printf("Stack contents (top to bottom):\n");
+    for (int i = s->top; i >= 0; i--) {
+        printf("[%d] %d\n", i, s->data[i]);
+    }
+}
+
+void peek(Stack *s) {
+    if (isEmpty(s)) {
+        printf("Stack is empty. No top element.\n");
+        return;
+    }
+
+    printf("Top element: %d\n", s->data[s->top]);
+}
+
+void stackSize(Stack *s) {
+    printf("Current stack size: %d/%d\n", s->top + 1, MAX_SIZE);
+}
+
+void clearStack(Stack *s) {
+    s->top = -1;
+    printf("Stack cleared.\n");
+}
+
+void printMenu() {
+    printf("\n========== STACK OPERATIONS ==========\n");
+    printf("1. Push\n");
+    printf("2. Pop\n");
+    printf("3. Display\n");
+    printf("4. Peek (view top element)\n");
+    printf("5. Check stack size\n");
+    printf("6. Clear stack\n");
+    printf("7. Exit\n");
+    printf("=====================================\n");
 }
