@@ -2,6 +2,7 @@
 #define SIZE 5
 
 int cq[SIZE], front=-1, rear=-1;
+#this part is to check and insert a new number 
 
 void insert() {
     if((rear+1)%SIZE == front) printf("Queue is full!\n");
